@@ -12,6 +12,12 @@ const requestSchema = z.object({
 const DEFAULT_DAILY_CREDITS = 20;
 const DEFAULT_MODEL = "gpt-4.1-mini";
 
+function getOpenAiApiKey(): string | undefined {
+  const raw = process.env.OPENAI_API_KEY;
+  const trimmed = typeof raw === "string" ? raw.trim() : "";
+  return trimmed.length > 0 ? trimmed : undefined;
+}
+
 function getDailyLimit(): number {
   const parsed = Number(process.env.DAILY_AI_CREDITS ?? DEFAULT_DAILY_CREDITS);
   return Number.isFinite(parsed) && parsed > 0 ? Math.floor(parsed) : DEFAULT_DAILY_CREDITS;
@@ -69,14 +75,21 @@ export async function POST(request: Request) {
     );
   }
 
-  if (!process.env.OPENAI_API_KEY) {
-    return NextResponse.json({ error: "OpenAI API key is missing on the server." }, { status: 500 });
+  const openAiKey = getOpenAiApiKey();
+  if (!openAiKey) {
+    return NextResponse.json(
+      {
+        error:
+          "OpenAI API key is missing on the server. Use the exact name OPENAI_API_KEY in .env.local (local) or in your host's environment variables (e.g. Vercel), then restart the dev server or redeploy.",
+      },
+      { status: 500 },
+    );
   }
 
   const [profile, checks] = await Promise.all([getProfileForUser(user.id), getRecentMoneyChecks(user.id, 5)]);
 
   const model = process.env.OPENAI_MODEL ?? DEFAULT_MODEL;
-  const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  const client = new OpenAI({ apiKey: openAiKey });
 
   const systemPrompt = [
     "You are MoneyCheck's financial coach for students and young adults.",
