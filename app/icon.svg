@@ -1,0 +1,14 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <title>MoneyCheck</title>
+  <path
+    fill="#131b2e"
+    d="M9 4h14q2 0 2 2v14q0 2-2 2h-5.2L16 27l-1.8-5H9q-2 0-2-2V6q0-2 2-2z"
+  />
+  <path
+    stroke="#34d399"
+    stroke-width="2.5"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    d="M11 16.5l3.5 3.5 7.5-9"
+  />
+</svg>
