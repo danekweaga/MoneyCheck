@@ -18,7 +18,8 @@ export type MoneyCheckPersistedInput = Omit<MoneyCheckFormInput, "pay_in_full_ca
 
 export function toPersistedMoneyCheck(data: MoneyCheckFormInput): MoneyCheckPersistedInput {
   const paidCash = data.type === "purchase" && data.pay_in_full_cash;
-  const { pay_in_full_cash: _, ...rest } = data;
+  const { pay_in_full_cash, ...rest } = data;
+  void pay_in_full_cash;
   if (!paidCash) return rest;
   return { ...rest, interest_rate: 0, months_to_payoff: 1 };
 }

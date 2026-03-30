@@ -2,21 +2,23 @@ import { LoginForm } from "@/components/auth/login-form";
 
 export function LoginMobileView() {
   return (
-    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background px-6 py-12">
-      <div className="absolute inset-0 -z-10 overflow-hidden">
-        <div className="absolute -right-24 -top-24 h-96 w-96 rounded-full bg-secondary-fixed/20 blur-3xl" />
-        <div className="absolute -left-48 top-1/2 h-80 w-80 rounded-full bg-primary-fixed/30 blur-3xl" />
-      </div>
-      <div className="w-full max-w-md space-y-8">
-        <div className="text-center space-y-3">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary-container text-on-primary">
-            <span className="text-xl font-bold">MC</span>
+    <main className="min-h-screen bg-surface px-6 pb-24 pt-10">
+      <div className="mx-auto mb-10 flex justify-center">
+        <div className="flex items-center gap-2">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
+            <span className="material-symbols-outlined text-sm text-on-primary">account_balance_wallet</span>
           </div>
-          <h1 className="text-4xl font-extrabold tracking-tight text-primary">MoneyCheck</h1>
-          <p className="mt-2 text-sm font-medium text-on-surface-variant">Smarter spending for students</p>
+          <span className="font-headline text-xl font-extrabold tracking-tight text-primary">MoneyCheck</span>
         </div>
+      </div>
+      <div className="mx-auto w-full max-w-md">
         <LoginForm variant="mobile" />
       </div>
+      <footer className="fixed bottom-0 left-0 right-0 py-6 text-center">
+        <p className="text-[10px] font-medium uppercase tracking-widest text-outline/50">
+          © {new Date().getFullYear()} MoneyCheck
+        </p>
+      </footer>
     </main>
   );
 }

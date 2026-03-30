@@ -1,19 +1,25 @@
 import { OnboardingForm } from "@/components/onboarding/onboarding-form";
+import { AppFooter } from "@/components/layout/app-footer";
 
 export function OnboardingMobileView() {
   return (
-    <main className="relative min-h-screen overflow-hidden bg-background px-6 pb-12 pt-24">
-      <div className="absolute inset-0 -z-10 overflow-hidden">
-        <div className="absolute -right-20 -top-20 h-72 w-72 rounded-full bg-secondary-fixed/20 blur-3xl" />
-      </div>
-      <div className="mx-auto max-w-2xl">
-        <div className="mb-8 space-y-2">
-          <p className="text-xs font-semibold uppercase tracking-widest text-on-primary-container">Step 2 of 5</p>
-          <h1 className="text-4xl font-extrabold tracking-tight text-primary">Set up your profile</h1>
-          <p className="text-on-surface-variant">Build your baseline so MoneyCheck can model smarter decisions.</p>
+    <div className="flex min-h-screen flex-col bg-surface">
+      <header className="px-6 py-8">
+        <h1 className="font-headline text-center text-2xl font-extrabold tracking-tight text-primary">MoneyCheck</h1>
+      </header>
+      <main className="flex-grow px-4 pb-8">
+        <div className="mx-auto mb-8 max-w-2xl space-y-3">
+          <span className="inline-flex items-center rounded-full bg-secondary-fixed px-3 py-1 text-xs font-semibold uppercase tracking-wider text-on-secondary-fixed">
+            Step 01 of 03
+          </span>
+          <h1 className="font-headline text-3xl font-extrabold tracking-tight text-primary">Design your financial future</h1>
+          <p className="text-sm text-on-surface-variant">A few details unlock your personalized dashboard.</p>
         </div>
-        <OnboardingForm variant="mobile" />
-      </div>
-    </main>
+        <div className="mx-auto max-w-2xl">
+          <OnboardingForm variant="mobile" />
+        </div>
+      </main>
+      <AppFooter />
+    </div>
   );
 }

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { DashboardDesktopView } from "@/components/views/dashboard/dashboard-desktop-view";
 import { DashboardMobileView } from "@/components/views/dashboard/dashboard-mobile-view";
@@ -6,6 +7,10 @@ import { getProfileForUser, isProfileComplete } from "@/lib/data/profile";
 import { isMobileRequest } from "@/lib/device";
 import { createClient } from "@/lib/supabase/server";
 import type { MoneyCheck } from "@/lib/types";
+
+export const metadata: Metadata = {
+  title: "Dashboard | MoneyCheck",
+};
 
 export default async function DashboardPage() {
   const isMobile = await isMobileRequest();
