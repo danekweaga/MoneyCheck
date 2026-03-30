@@ -4,14 +4,20 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { calculateMoneyCheck } from "@/lib/calculations/money-check";
 import { createClient } from "@/lib/supabase/server";
-import { moneyCheckSchema, type MoneyCheckInput } from "@/lib/validations/money-check";
+import {
+  moneyCheckFormSchema,
+  toPersistedMoneyCheck,
+  type MoneyCheckFormInput,
+} from "@/lib/validations/money-check";
 
-export type MoneyCheckActionErrors = Partial<Record<keyof MoneyCheckInput, string[]>> & { _form?: string[] };
+export type MoneyCheckActionErrors = Partial<Record<keyof MoneyCheckFormInput, string[]>> & { _form?: string[] };
 export type MoneyCheckActionResult = { error: MoneyCheckActionErrors } | undefined;
 
-export async function createMoneyCheck(input: MoneyCheckInput): Promise<MoneyCheckActionResult> {
-  const parsed = moneyCheckSchema.safeParse(input);
+export async function createMoneyCheck(input: MoneyCheckFormInput): Promise<MoneyCheckActionResult> {
+  const parsed = moneyCheckFormSchema.safeParse(input);
   if (!parsed.success) return { error: parsed.error.flatten().fieldErrors as MoneyCheckActionErrors };
+
+  const row = toPersistedMoneyCheck(parsed.data);
 
   const supabase = await createClient();
   const {
@@ -29,24 +35,24 @@ export async function createMoneyCheck(input: MoneyCheckInput): Promise<MoneyChe
   if (profileError || !profile) return { error: { _form: ["Complete onboarding before creating a check."] } };
 
   const calc = calculateMoneyCheck(
-    parsed.data.amount,
+    row.amount,
     Number(profile.monthly_income),
-    parsed.data.months_to_payoff,
-    parsed.data.interest_rate,
-    parsed.data.inflation_rate,
+    row.months_to_payoff,
+    row.interest_rate,
+    row.inflation_rate,
   );
 
   const { data: inserted, error } = await supabase
     .from("money_checks")
     .insert({
       user_id: user.id,
-      title: parsed.data.title,
-      type: parsed.data.type,
-      category: parsed.data.category,
-      amount: parsed.data.amount,
-      interest_rate: parsed.data.interest_rate,
-      inflation_rate: parsed.data.inflation_rate,
-      months_to_payoff: parsed.data.months_to_payoff,
+      title: row.title,
+      type: row.type,
+      category: row.category,
+      amount: row.amount,
+      interest_rate: row.interest_rate,
+      inflation_rate: row.inflation_rate,
+      months_to_payoff: row.months_to_payoff,
       budget_impact_percent: calc.budget_impact_percent,
       future_value_lost: calc.future_value_lost,
       risk_level: calc.risk_level,

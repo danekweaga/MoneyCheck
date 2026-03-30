@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, type Resolver } from "react-hook-form";
 import { createMoneyCheck } from "@/lib/actions/money-check";
 import type { MoneyCheckType } from "@/lib/types";
-import { moneyCheckSchema, type MoneyCheckInput } from "@/lib/validations/money-check";
+import { moneyCheckFormSchema, type MoneyCheckFormInput } from "@/lib/validations/money-check";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -29,8 +29,8 @@ export function NewCheckForm({ variant = "mobile" }: NewCheckFormProps) {
   const [rootError, setRootError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
-  const form = useForm<MoneyCheckInput>({
-    resolver: zodResolver(moneyCheckSchema) as Resolver<MoneyCheckInput>,
+  const form = useForm<MoneyCheckFormInput>({
+    resolver: zodResolver(moneyCheckFormSchema) as Resolver<MoneyCheckFormInput>,
     defaultValues: {
       title: "",
       type: "purchase",
@@ -39,10 +39,20 @@ export function NewCheckForm({ variant = "mobile" }: NewCheckFormProps) {
       interest_rate: 8,
       inflation_rate: 2.5,
       months_to_payoff: 12,
+      pay_in_full_cash: false,
     },
   });
 
-  function onSubmit(values: MoneyCheckInput) {
+  const checkType = form.watch("type");
+  const payInFullCash = form.watch("pay_in_full_cash");
+
+  useEffect(() => {
+    if (checkType !== "purchase") {
+      form.setValue("pay_in_full_cash", false);
+    }
+  }, [checkType, form]);
+
+  function onSubmit(values: MoneyCheckFormInput) {
     setRootError(null);
     startTransition(async () => {
       try {
@@ -136,6 +146,38 @@ export function NewCheckForm({ variant = "mobile" }: NewCheckFormProps) {
                 </FormItem>
               )}
             />
+            {checkType === "purchase" ? (
+              <FormField
+                control={form.control}
+                name="pay_in_full_cash"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center gap-3 space-y-0 rounded-xl bg-surface-container-highest px-4 py-3">
+                    <FormControl>
+                      <input
+                        type="checkbox"
+                        id="pay_in_full_cash"
+                        checked={field.value}
+                        onChange={(e) => {
+                          const checked = e.target.checked;
+                          field.onChange(checked);
+                          if (checked) {
+                            form.setValue("interest_rate", 0);
+                            form.setValue("months_to_payoff", 1);
+                          }
+                        }}
+                        className="h-4 w-4 shrink-0 rounded border border-outline-variant accent-primary"
+                      />
+                    </FormControl>
+                    <div className="flex flex-col gap-0.5 leading-snug">
+                      <FormLabel htmlFor="pay_in_full_cash" className="cursor-pointer text-sm font-semibold text-on-surface">
+                        Paid in full with cash
+                      </FormLabel>
+                      <p className="text-xs text-on-surface-variant">No financing. Interest is treated as 0% and payoff is immediate.</p>
+                    </div>
+                  </FormItem>
+                )}
+              />
+            ) : null}
             <FormField
               control={form.control}
               name="amount"
@@ -158,32 +200,34 @@ export function NewCheckForm({ variant = "mobile" }: NewCheckFormProps) {
               )}
             />
             <div className="grid gap-4 sm:grid-cols-2">
-              <FormField
-                control={form.control}
-                name="interest_rate"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-[11px] font-bold uppercase tracking-widest text-on-surface-variant">Interest rate (%)</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        inputMode="decimal"
-                        step="0.01"
-                        min={0}
-                        placeholder="8"
-                        className="h-12 rounded-xl border-none bg-surface-container-highest"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              {!(checkType === "purchase" && payInFullCash) ? (
+                <FormField
+                  control={form.control}
+                  name="interest_rate"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-[11px] font-bold uppercase tracking-widest text-on-surface-variant">Interest rate (%)</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          inputMode="decimal"
+                          step="0.01"
+                          min={0}
+                          placeholder="8"
+                          className="h-12 rounded-xl border-none bg-surface-container-highest"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              ) : null}
               <FormField
                 control={form.control}
                 name="inflation_rate"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className={checkType === "purchase" && payInFullCash ? "sm:col-span-2" : undefined}>
                     <FormLabel className="text-[11px] font-bold uppercase tracking-widest text-on-surface-variant">Inflation rate (%)</FormLabel>
                     <FormControl>
                       <Input
@@ -201,27 +245,29 @@ export function NewCheckForm({ variant = "mobile" }: NewCheckFormProps) {
                 )}
               />
             </div>
-            <FormField
-              control={form.control}
-              name="months_to_payoff"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-[11px] font-bold uppercase tracking-widest text-on-surface-variant">Months to payoff</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      inputMode="numeric"
-                      step={1}
-                      min={1}
-                      placeholder="12"
-                      className="h-12 rounded-xl border-none bg-surface-container-highest"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {!(checkType === "purchase" && payInFullCash) ? (
+              <FormField
+                control={form.control}
+                name="months_to_payoff"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-[11px] font-bold uppercase tracking-widest text-on-surface-variant">Months to payoff</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        inputMode="numeric"
+                        step={1}
+                        min={1}
+                        placeholder="12"
+                        className="h-12 rounded-xl border-none bg-surface-container-highest"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            ) : null}
             {rootError ? <p className="text-sm font-medium text-destructive">{rootError}</p> : null}
             <Button
               type="submit"
