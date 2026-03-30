@@ -3,7 +3,6 @@ import { RecentChecksSection } from "@/components/dashboard/recent-checks";
 import { SummaryCards } from "@/components/dashboard/summary-cards";
 import { MobileShell } from "@/components/layout/mobile-shell";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { formatCurrency } from "@/lib/formatters";
 import type { MoneyCheck, Profile } from "@/lib/types";
 
 type Props = {
@@ -13,22 +12,16 @@ type Props = {
 };
 
 export function DashboardMobileView({ profile, checks, hasChecksError }: Props) {
-  const firstName = profile.full_name.split(" ")[0] ?? profile.full_name;
-  const discretionary = Math.max(0, profile.monthly_income - profile.monthly_expenses);
-
   return (
     <MobileShell>
-      <section className="mb-8 space-y-4 rounded-xl bg-surface-container-lowest p-6 shadow-sm">
-        <h1 className="font-headline text-3xl font-extrabold tracking-tight text-primary">Welcome back, {firstName}!</h1>
-        <p className="text-sm leading-relaxed text-on-surface-variant">
-          About <span className="font-bold text-secondary">{formatCurrency(discretionary)}</span> left after typical expenses this
-          month.
-        </p>
-        <Link
-          href="/check"
-          className="btn-gradient inline-flex rounded-lg px-5 py-3 text-sm font-bold text-on-primary shadow-lg shadow-primary/20"
-        >
-          New Check
+      <section className="mb-8">
+        <p className="text-xs font-bold uppercase tracking-widest text-on-primary-container">Overview</p>
+        <h1 className="mt-1 text-4xl font-extrabold tracking-tight text-primary">
+          Hi, {profile.full_name.split(" ")[0] ?? profile.full_name}!
+        </h1>
+        <p className="mt-2 text-sm text-on-surface-variant">Your financial architecture is looking stable today.</p>
+        <Link href="/check" className="architect-gradient mt-4 inline-flex rounded-xl px-4 py-2 text-sm font-bold text-white">
+          Check New Spend
         </Link>
       </section>
 

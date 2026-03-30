@@ -1,14 +1,9 @@
-import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { CheckDesktopView } from "@/components/views/check/check-desktop-view";
 import { CheckMobileView } from "@/components/views/check/check-mobile-view";
 import { getProfileForUser, isProfileComplete } from "@/lib/data/profile";
 import { isMobileRequest } from "@/lib/device";
 import { createClient } from "@/lib/supabase/server";
-
-export const metadata: Metadata = {
-  title: "New Check | MoneyCheck",
-};
 
 export default async function CheckPage() {
   const isMobile = await isMobileRequest();

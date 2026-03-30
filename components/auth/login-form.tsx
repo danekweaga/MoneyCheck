@@ -5,9 +5,10 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { SocialAuthButtons } from "@/components/auth/social-auth-buttons";
 import { createClient } from "@/lib/supabase/client";
 import { loginSchema, type LoginInput } from "@/lib/validations/auth";
 
@@ -19,21 +20,17 @@ export function LoginForm({ variant = "mobile" }: LoginFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [rootError, setRootError] = useState<string | null>(null);
-  const [showPassword, setShowPassword] = useState(false);
   const supabase = createClient();
 
   const form = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),
-    defaultValues: { email: "", password: "", rememberMe: false },
+    defaultValues: { email: "", password: "" },
   });
 
   function onSubmit(values: LoginInput) {
     setRootError(null);
     startTransition(async () => {
-      const { error } = await supabase.auth.signInWithPassword({
-        email: values.email,
-        password: values.password,
-      });
+      const { error } = await supabase.auth.signInWithPassword(values);
       if (error) {
         setRootError(error.message);
         return;
@@ -43,37 +40,41 @@ export function LoginForm({ variant = "mobile" }: LoginFormProps) {
     });
   }
 
-  const headingAlign = variant === "desktop" ? "text-center lg:text-left" : "text-center";
-
   return (
-    <div className="w-full max-w-md space-y-8">
-      <div className={`space-y-2 ${headingAlign}`}>
-        <h2 className="font-headline text-3xl font-bold tracking-tight text-on-background">Welcome back</h2>
-        <p className="font-medium text-on-surface-variant">Enter your credentials to access your dashboard</p>
-      </div>
-
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <div className="space-y-4">
+    <Card
+      className={
+        variant === "desktop"
+          ? "glass-panel architect-shadow w-full max-w-lg border-outline-variant/30 bg-surface-container-lowest/90"
+          : "glass-panel architect-shadow w-full max-w-md border-outline-variant/30 bg-surface-container-lowest/90"
+      }
+    >
+      <CardHeader className={variant === "desktop" ? "space-y-2 px-8 pt-8" : "space-y-2 px-7 pt-7"}>
+        <CardTitle className={variant === "desktop" ? "text-3xl font-extrabold tracking-tight text-primary" : "text-2xl font-bold tracking-tight text-primary"}>
+          Welcome back
+        </CardTitle>
+        <CardDescription className="text-on-surface-variant">
+          {variant === "desktop" ? "Sign in to your account." : "Sign in to continue your MoneyCheck plan."}
+        </CardDescription>
+      </CardHeader>
+      <CardContent className={variant === "desktop" ? "px-8 pb-8" : "px-7 pb-7"}>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
             <FormField
               control={form.control}
               name="email"
               render={({ field }) => (
-                <FormItem className="space-y-2">
-                  <FormLabel className="ml-1 text-sm font-semibold text-on-surface-variant">Email Address</FormLabel>
+                <FormItem>
+                  <FormLabel className="text-[11px] font-bold uppercase tracking-widest text-on-surface-variant">
+                    Email Address
+                  </FormLabel>
                   <FormControl>
-                    <div className="group relative">
-                      <span className="material-symbols-outlined pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[20px] text-outline transition-colors group-focus-within:text-primary">
-                        mail
-                      </span>
-                      <Input
-                        type="email"
-                        autoComplete="email"
-                        placeholder="name@company.com"
-                        className="h-12 rounded-lg border-none bg-surface-container-low py-3.5 pl-12 pr-4 font-medium text-on-surface placeholder:text-outline/60 focus-visible:bg-surface-container-lowest focus-visible:ring-2 focus-visible:ring-primary/40"
-                        {...field}
-                      />
-                    </div>
+                    <Input
+                      type="email"
+                      autoComplete="email"
+                      placeholder="you@example.com"
+                      className="h-12 rounded-xl border-none bg-surface-container-highest"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -83,91 +84,44 @@ export function LoginForm({ variant = "mobile" }: LoginFormProps) {
               control={form.control}
               name="password"
               render={({ field }) => (
-                <FormItem className="space-y-2">
-                  <div className="flex items-center justify-between px-1">
-                    <FormLabel className="text-sm font-semibold text-on-surface-variant">Password</FormLabel>
-                    <Link href="/forgot-password" className="text-xs font-bold text-primary transition-colors hover:text-primary-container">
-                      Forgot password?
-                    </Link>
-                  </div>
+                <FormItem>
+                  <FormLabel className="text-[11px] font-bold uppercase tracking-widest text-on-surface-variant">
+                    Password
+                  </FormLabel>
                   <FormControl>
-                    <div className="group relative">
-                      <span className="material-symbols-outlined pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[20px] text-outline transition-colors group-focus-within:text-primary">
-                        lock
-                      </span>
-                      <Input
-                        type={showPassword ? "text" : "password"}
-                        autoComplete="current-password"
-                        placeholder="••••••••"
-                        className="h-12 rounded-lg border-none bg-surface-container-low py-3.5 pl-12 pr-12 font-medium text-on-surface placeholder:text-outline/60 focus-visible:bg-surface-container-lowest focus-visible:ring-2 focus-visible:ring-primary/40"
-                        {...field}
-                      />
-                      <button
-                        type="button"
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-outline transition-colors hover:text-on-surface"
-                        onClick={() => setShowPassword((s) => !s)}
-                        aria-label={showPassword ? "Hide password" : "Show password"}
-                      >
-                        <span className="material-symbols-outlined text-[20px]">visibility</span>
-                      </button>
-                    </div>
+                    <Input
+                      type="password"
+                      autoComplete="current-password"
+                      placeholder="••••••••"
+                      className="h-12 rounded-xl border-none bg-surface-container-highest"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-          </div>
-
-          <FormField
-            control={form.control}
-            name="rememberMe"
-            render={({ field }) => (
-              <FormItem className="flex flex-row items-center space-x-2 space-y-0 px-1">
-                <FormControl>
-                  <input
-                    type="checkbox"
-                    checked={field.value}
-                    onChange={field.onChange}
-                    className="h-4 w-4 rounded border-outline-variant bg-surface-container-low text-primary focus:ring-primary/20"
-                    id="remember"
-                  />
-                </FormControl>
-                <FormLabel htmlFor="remember" className="!mt-0 cursor-pointer text-sm font-medium text-on-surface-variant">
-                  Keep me signed in for 30 days
-                </FormLabel>
-              </FormItem>
-            )}
-          />
-
-          {rootError ? <p className="text-sm font-medium text-destructive">{rootError}</p> : null}
-
-          <button
-            type="submit"
-            disabled={isPending}
-            className="primary-gradient editorial-shadow w-full transform rounded-lg py-4 text-base font-bold text-white transition-all duration-200 active:scale-[0.98] disabled:opacity-60"
-          >
-            {isPending ? "Signing in..." : "Sign In to Dashboard"}
-          </button>
-        </form>
-      </Form>
-
-      <div className="relative py-4">
-        <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-outline-variant/30" />
-        </div>
-        <div className="relative flex justify-center text-xs font-bold uppercase tracking-widest">
-          <span className="bg-surface px-4 text-outline">Or continue with</span>
-        </div>
-      </div>
-
-      <SocialAuthButtons />
-
-      <p className="text-center font-medium text-on-surface-variant">
-        Don&apos;t have an account?{" "}
-        <Link href="/signup" className="ml-1 font-bold text-primary underline-offset-4 hover:underline">
-          Create Account
-        </Link>
-      </p>
-    </div>
+            {rootError ? <p className="text-sm font-medium text-destructive">{rootError}</p> : null}
+            <Button
+              type="submit"
+              className={
+                variant === "desktop"
+                  ? "architect-gradient w-full rounded-xl py-6 text-base font-bold text-white"
+                  : "architect-gradient w-full rounded-xl py-6 text-base font-bold text-white"
+              }
+              disabled={isPending}
+            >
+              {isPending ? "Signing in..." : "Sign in"}
+            </Button>
+          </form>
+        </Form>
+        <p className="mt-5 text-center text-sm text-on-surface-variant">
+          No account yet?{" "}
+          <Link href="/signup" className="font-medium text-primary hover:underline">
+            Sign up
+          </Link>
+        </p>
+      </CardContent>
+    </Card>
   );
 }
