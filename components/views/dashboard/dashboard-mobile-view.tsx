@@ -2,8 +2,10 @@ import Link from "next/link";
 import { RecentChecksSection } from "@/components/dashboard/recent-checks";
 import { SummaryCards } from "@/components/dashboard/summary-cards";
 import { MobileShell } from "@/components/layout/mobile-shell";
+import { buttonVariants } from "@/components/ui/button-variants";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import type { MoneyCheck, Profile } from "@/lib/types";
+import { cn } from "@/lib/utils";
 
 type Props = {
   profile: Profile;
@@ -20,13 +22,14 @@ export function DashboardMobileView({ profile, checks, hasChecksError }: Props) 
           Hi, {profile.full_name.split(" ")[0] ?? profile.full_name}!
         </h1>
         <p className="mt-2 text-sm text-on-surface-variant">Your financial architecture is looking stable today.</p>
-        <Link href="/check" className="architect-gradient mt-4 inline-flex rounded-xl px-4 py-2 text-sm font-bold text-white">
+        <Link href="/check" className={cn(buttonVariants({ className: "architect-gradient mt-4 inline-flex rounded-xl px-4 py-2 text-sm font-bold text-white" }))}>
           Check New Spend
         </Link>
       </section>
 
       <SummaryCards
-        monthlyIncome={profile.monthly_income}
+        monthlyIncomeBase={profile.monthly_income}
+        extraSpendable={profile.extra_spendable}
         monthlyExpenses={profile.monthly_expenses}
         monthlySavingsGoal={profile.monthly_savings_goal}
       />

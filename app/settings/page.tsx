@@ -11,14 +11,22 @@ export default async function SettingsPage() {
   const supabase = await createClient();
   const {
     data: { user },
+    error: userError,
   } = await supabase.auth.getUser();
 
-  if (!user) redirect("/login");
+  if (!user || userError) redirect("/login");
 
   const profile = await getProfileForUser(user.id);
   if (!isProfileComplete(profile)) redirect("/onboarding");
 
-  const credits = await getAiCreditsStatus(user.id);
+  let credits = { remainingToday: 0, usedToday: 0, dailyLimit: 20 };
+  let hasCreditsError = false;
+  try {
+    credits = await getAiCreditsStatus(user.id);
+  } catch (error) {
+    console.error("Failed to load AI credits status.", error);
+    hasCreditsError = true;
+  }
 
   return isMobile ? (
     <SettingsMobileView
@@ -26,6 +34,7 @@ export default async function SettingsPage() {
       creditsRemaining={credits.remainingToday}
       creditsUsed={credits.usedToday}
       creditsLimit={credits.dailyLimit}
+      hasCreditsError={hasCreditsError}
     />
   ) : (
     <SettingsDesktopView
@@ -33,6 +42,7 @@ export default async function SettingsPage() {
       creditsRemaining={credits.remainingToday}
       creditsUsed={credits.usedToday}
       creditsLimit={credits.dailyLimit}
+      hasCreditsError={hasCreditsError}
     />
   );
 }

@@ -73,6 +73,10 @@ export function OnboardingForm({ variant = "mobile" }: OnboardingFormProps) {
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+            <div className="rounded-xl bg-surface-container-low p-3 text-xs text-on-surface-variant">
+              <p className="font-semibold uppercase tracking-wider text-on-primary-container">Profile Setup</p>
+              <p className="mt-1">Step 1 of 2: share your monthly baseline to personalize every check.</p>
+            </div>
             <FormField
               control={form.control}
               name="full_name"
@@ -82,10 +86,12 @@ export function OnboardingForm({ variant = "mobile" }: OnboardingFormProps) {
                   <FormControl>
                     <Input placeholder="Alex Johnson" className="h-12 rounded-xl border-none bg-surface-container-highest" {...field} />
                   </FormControl>
+                  <p className="text-xs text-on-surface-variant">Use your preferred first and last name.</p>
                   <FormMessage />
                 </FormItem>
               )}
             />
+            <p className="text-[11px] font-bold uppercase tracking-widest text-on-primary-container">Monthly finances</p>
             <div className="grid gap-4 sm:grid-cols-2">
               <FormField
                 control={form.control}
@@ -104,6 +110,7 @@ export function OnboardingForm({ variant = "mobile" }: OnboardingFormProps) {
                         {...field}
                       />
                     </FormControl>
+                    <p className="text-xs text-on-surface-variant">After-tax income. Include recurring allowance/paycheck.</p>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -125,11 +132,13 @@ export function OnboardingForm({ variant = "mobile" }: OnboardingFormProps) {
                         {...field}
                       />
                     </FormControl>
+                    <p className="text-xs text-on-surface-variant">Rent, transport, food, subscriptions, and bills.</p>
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
+            <p className="text-[11px] font-bold uppercase tracking-widest text-on-primary-container">Goals and risk</p>
             <div className="grid gap-4 sm:grid-cols-2">
               <FormField
                 control={form.control}
@@ -150,6 +159,7 @@ export function OnboardingForm({ variant = "mobile" }: OnboardingFormProps) {
                         {...field}
                       />
                     </FormControl>
+                    <p className="text-xs text-on-surface-variant">How much you want to set aside each month.</p>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -172,6 +182,7 @@ export function OnboardingForm({ variant = "mobile" }: OnboardingFormProps) {
                         <SelectItem value="high">High</SelectItem>
                       </SelectContent>
                     </Select>
+                    <p className="text-xs text-on-surface-variant">Low = safer choices, High = more flexible trade-offs.</p>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -183,7 +194,7 @@ export function OnboardingForm({ variant = "mobile" }: OnboardingFormProps) {
               className="architect-gradient w-full rounded-xl py-6 text-base font-bold text-white"
               disabled={isPending}
             >
-              {isPending ? "Saving profile..." : "Continue to dashboard"}
+              {isPending ? "Saving profile..." : "Continue to Dashboard"}
             </Button>
           </form>
         </Form>

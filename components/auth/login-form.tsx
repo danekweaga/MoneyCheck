@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useTransition } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -18,6 +18,7 @@ type LoginFormProps = {
 
 export function LoginForm({ variant = "mobile" }: LoginFormProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
   const [rootError, setRootError] = useState<string | null>(null);
   const supabase = createClient();
@@ -35,7 +36,9 @@ export function LoginForm({ variant = "mobile" }: LoginFormProps) {
         setRootError(error.message);
         return;
       }
-      router.push("/dashboard");
+      const nextPath = searchParams.get("next");
+      const safeNext = nextPath && nextPath.startsWith("/") ? nextPath : "/";
+      router.push(safeNext);
       router.refresh();
     });
   }

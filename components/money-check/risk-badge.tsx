@@ -8,5 +8,5 @@ const styles: Record<RiskLevel, string> = {
 };
 
 export function RiskBadge({ level }: { level: RiskLevel }) {
-  return <Badge className={styles[level]}>{level}</Badge>;
+  return <Badge className={`${styles[level]} px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider`}>{level}</Badge>;
 }

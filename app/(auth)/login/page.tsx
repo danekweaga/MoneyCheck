@@ -10,9 +10,10 @@ export default async function LoginPage() {
   const supabase = await createClient();
   const {
     data: { user },
+    error: userError,
   } = await supabase.auth.getUser();
 
-  if (user) {
+  if (user && !userError) {
     const profile = await getProfileForUser(user.id);
     redirect(isProfileComplete(profile) ? "/dashboard" : "/onboarding");
   }

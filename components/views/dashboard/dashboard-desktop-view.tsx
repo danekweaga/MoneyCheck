@@ -2,8 +2,10 @@ import Link from "next/link";
 import { RecentChecksSection } from "@/components/dashboard/recent-checks";
 import { SummaryCards } from "@/components/dashboard/summary-cards";
 import { DesktopShell } from "@/components/layout/desktop-shell";
+import { buttonVariants } from "@/components/ui/button-variants";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import type { MoneyCheck, Profile } from "@/lib/types";
+import { cn } from "@/lib/utils";
 
 type Props = {
   profile: Profile;
@@ -22,13 +24,14 @@ export function DashboardDesktopView({ profile, checks, hasChecksError }: Props)
           </h1>
           <p className="mt-2 max-w-xl text-on-surface-variant">Your financial architecture is looking stable today. Here is your blueprint.</p>
         </div>
-        <Link href="/check" className="architect-gradient rounded-xl px-6 py-3 font-semibold text-white architect-shadow">
+        <Link href="/check" className={cn(buttonVariants({ className: "architect-gradient rounded-xl px-6 py-3 font-semibold text-white architect-shadow" }))}>
           Check New Spend
         </Link>
       </section>
 
       <SummaryCards
-        monthlyIncome={profile.monthly_income}
+        monthlyIncomeBase={profile.monthly_income}
+        extraSpendable={profile.extra_spendable}
         monthlyExpenses={profile.monthly_expenses}
         monthlySavingsGoal={profile.monthly_savings_goal}
       />

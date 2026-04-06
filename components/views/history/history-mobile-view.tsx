@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { RiskBadge } from "@/components/money-check/risk-badge";
 import { MobileShell } from "@/components/layout/mobile-shell";
+import { buttonVariants } from "@/components/ui/button-variants";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatCurrency, formatPercent } from "@/lib/formatters";
 import type { MoneyCheck } from "@/lib/types";
+import { cn } from "@/lib/utils";
 
 type Props = {
   checks: MoneyCheck[];
@@ -18,7 +20,7 @@ export function HistoryMobileView({ checks, hasChecksError }: Props) {
         <h1 className="text-4xl font-extrabold tracking-tight text-primary">History</h1>
         <p className="mt-2 text-on-surface-variant">Every check you have run, newest first.</p>
         <div className="mt-4">
-          <Link href="/api/export/records" className="architect-gradient inline-flex rounded-xl px-4 py-2 text-sm font-bold text-white">
+          <Link href="/api/export/records" className={cn(buttonVariants({ className: "architect-gradient inline-flex rounded-xl px-4 py-2 text-sm font-bold text-white" }))}>
             Download Excel
           </Link>
         </div>
@@ -38,7 +40,7 @@ export function HistoryMobileView({ checks, hasChecksError }: Props) {
             <CardDescription>When you save a check, it appears here.</CardDescription>
           </CardHeader>
           <CardContent>
-            <Link href="/check" className="text-sm font-semibold text-primary underline">
+            <Link href="/check" className={cn(buttonVariants({ className: "architect-gradient w-full text-white" }))}>
               Create your first check
             </Link>
           </CardContent>

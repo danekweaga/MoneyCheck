@@ -1,12 +1,17 @@
 import Link from "next/link";
-import { ChatbotWidget } from "@/components/chat/chatbot-widget";
+import dynamic from "next/dynamic";
 import { LogoutButton } from "@/components/dashboard/logout-button";
+import { buttonVariants } from "@/components/ui/button-variants";
+import { cn } from "@/lib/utils";
+
+const ChatbotWidget = dynamic(() => import("@/components/chat/chatbot-widget").then((mod) => mod.ChatbotWidget));
 
 const navLinks = [
   { href: "/dashboard", label: "Dashboard" },
   { href: "/history", label: "History" },
   { href: "/check", label: "New Check" },
   { href: "/settings", label: "Settings" },
+  { href: "/instructions", label: "Instructions" },
 ];
 
 export function DesktopShell({ children }: { children: React.ReactNode }) {
@@ -40,7 +45,7 @@ export function DesktopShell({ children }: { children: React.ReactNode }) {
             className="w-full rounded-full border-none bg-surface-container-highest px-4 py-2 text-sm focus:ring-2 focus:ring-ring"
           />
         </div>
-        <Link href="/check" className="architect-gradient rounded-full px-6 py-2.5 text-sm font-bold text-white">
+        <Link href="/check" className={cn(buttonVariants({ className: "architect-gradient rounded-full px-6 py-2.5 text-sm font-bold text-white" }))}>
           Check New Spend
         </Link>
       </header>

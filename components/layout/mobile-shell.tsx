@@ -1,6 +1,10 @@
 import Link from "next/link";
-import { ChatbotWidget } from "@/components/chat/chatbot-widget";
+import dynamic from "next/dynamic";
 import { LogoutButton } from "@/components/dashboard/logout-button";
+import { buttonVariants } from "@/components/ui/button-variants";
+import { cn } from "@/lib/utils";
+
+const ChatbotWidget = dynamic(() => import("@/components/chat/chatbot-widget").then((mod) => mod.ChatbotWidget));
 
 export function MobileShell({ children }: { children: React.ReactNode }) {
   return (
@@ -25,7 +29,10 @@ export function MobileShell({ children }: { children: React.ReactNode }) {
           <Link href="/settings" className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">
             Settings
           </Link>
-          <Link href="/check" className="architect-gradient rounded-lg px-3 py-2 text-xs font-semibold uppercase tracking-wider text-white">
+          <Link href="/instructions" className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">
+            Guide
+          </Link>
+          <Link href="/check" className={cn(buttonVariants({ className: "architect-gradient rounded-lg px-3 py-2 text-xs font-semibold uppercase tracking-wider text-white" }))}>
             New Check
           </Link>
         </div>

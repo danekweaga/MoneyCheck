@@ -13,6 +13,8 @@ export interface Profile {
   user_id: string;
   full_name: string;
   monthly_income: number;
+  /** Cash from gifts, refunds, side income, etc. counted with monthly income for budget-impact checks. */
+  extra_spendable: number;
   monthly_expenses: number;
   monthly_savings_goal: number;
   risk_tolerance: RiskTolerance;

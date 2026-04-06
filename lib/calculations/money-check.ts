@@ -34,12 +34,18 @@ export function calculateMoneyCheck(
   interestRate: number,
   inflationRate: number,
 ) {
-  const budgetImpactPercent = monthlyIncome > 0 ? (amount / monthlyIncome) * 100 : 0;
-  const years = monthsToPayoff / 12;
-  const annualRate = effectiveGrowthRate(interestRate, inflationRate);
-  const futureValueLost = amount * Math.pow(1 + annualRate, years);
+  const safeAmount = Number.isFinite(amount) && amount > 0 ? amount : 0;
+  const safeIncome = Number.isFinite(monthlyIncome) && monthlyIncome > 0 ? monthlyIncome : 0;
+  const safeMonths = Number.isFinite(monthsToPayoff) && monthsToPayoff > 0 ? monthsToPayoff : 1;
+  const safeInterest = Number.isFinite(interestRate) ? interestRate : 0;
+  const safeInflation = Number.isFinite(inflationRate) ? inflationRate : 0;
+
+  const budgetImpactPercent = safeIncome > 0 ? (safeAmount / safeIncome) * 100 : 0;
+  const years = safeMonths / 12;
+  const annualRate = effectiveGrowthRate(safeInterest, safeInflation);
+  const futureValueLost = safeAmount * Math.pow(1 + annualRate, years);
   const riskLevel = getRiskLevel(budgetImpactPercent);
-  const regretScore = getRegretScore(amount, monthlyIncome, riskLevel);
+  const regretScore = getRegretScore(safeAmount, safeIncome || 1, riskLevel);
 
   return {
     budget_impact_percent: toTwoDecimals(budgetImpactPercent),

@@ -13,6 +13,12 @@ function getUtcDayStartIso(): string {
   return dayStart.toISOString();
 }
 
+function toFiniteNonNegativeInt(value: unknown): number {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) return 0;
+  return Math.max(0, Math.floor(parsed));
+}
+
 export type AiCreditsStatus = {
   dailyLimit: number;
   usedToday: number;
@@ -41,7 +47,7 @@ export async function getAiCreditsStatus(userId: string): Promise<AiCreditsStatu
     throw new Error(error.message);
   }
 
-  const usedToday = (data ?? []).reduce((sum, row) => sum + (row.credits_used ?? 0), 0);
+  const usedToday = (data ?? []).reduce((sum, row) => sum + toFiniteNonNegativeInt(row.credits_used), 0);
   const remainingToday = Math.max(dailyLimit - usedToday, 0);
 
   return {

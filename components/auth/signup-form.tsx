@@ -43,7 +43,7 @@ export function SignupForm({ variant = "mobile" }: SignupFormProps) {
         return;
       }
 
-      router.push("/onboarding");
+      router.push("/");
       router.refresh();
     });
   }

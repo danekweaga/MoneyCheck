@@ -10,9 +10,10 @@ export default async function CheckPage() {
   const supabase = await createClient();
   const {
     data: { user },
+    error: userError,
   } = await supabase.auth.getUser();
 
-  if (!user) redirect("/login");
+  if (!user || userError) redirect("/login");
 
   const profile = await getProfileForUser(user.id);
   if (!isProfileComplete(profile)) redirect("/onboarding");

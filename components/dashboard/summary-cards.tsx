@@ -2,21 +2,39 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatCurrency } from "@/lib/formatters";
 
 type Props = {
-  monthlyIncome: number;
+  monthlyIncomeBase: number;
+  extraSpendable: number;
   monthlyExpenses: number;
   monthlySavingsGoal: number;
 };
 
-export function SummaryCards({ monthlyIncome, monthlyExpenses, monthlySavingsGoal }: Props) {
+export function SummaryCards({
+  monthlyIncomeBase,
+  extraSpendable,
+  monthlyExpenses,
+  monthlySavingsGoal,
+}: Props) {
+  const spendableTotal = monthlyIncomeBase + extraSpendable;
   return (
     <div className="grid gap-5 sm:grid-cols-3">
       <Card className="architect-shadow overflow-hidden border-outline-variant/25 bg-surface-container-lowest">
         <CardHeader className="pb-3">
-          <CardTitle className="text-xs font-bold uppercase tracking-widest text-on-primary-container">Monthly income</CardTitle>
+          <CardTitle className="text-xs font-bold uppercase tracking-widest text-on-primary-container">
+            Spendable this month
+          </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-3xl font-extrabold tracking-tight text-primary">{formatCurrency(monthlyIncome)}</p>
-          <p className="mt-2 text-xs font-semibold text-secondary">+12% from last month</p>
+          <p className="text-3xl font-extrabold tracking-tight text-primary">{formatCurrency(spendableTotal)}</p>
+          <p className="mt-2 text-xs text-on-surface-variant">
+            {extraSpendable > 0 ? (
+              <>
+                {formatCurrency(monthlyIncomeBase)} base + {formatCurrency(extraSpendable)} extra (gifts, refunds,
+                etc.)
+              </>
+            ) : (
+              <>Matches your monthly income — add extra cash in Settings when you receive gifts or outside money.</>
+            )}
+          </p>
         </CardContent>
       </Card>
       <Card className="architect-shadow overflow-hidden border-outline-variant/25 bg-surface-container-lowest">

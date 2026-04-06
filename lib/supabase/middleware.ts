@@ -2,8 +2,8 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { fetchProfileIsComplete } from "@/lib/supabase/middleware-helpers";
 
-const PROTECTED_ROUTES = ["/dashboard", "/check", "/history", "/settings", "/onboarding"];
-const NEEDS_PROFILE_ROUTES = ["/dashboard", "/check", "/history", "/settings"];
+const PROTECTED_ROUTES = ["/dashboard", "/check", "/history", "/settings", "/instructions", "/onboarding"];
+const NEEDS_PROFILE_ROUTES = ["/dashboard", "/check", "/history", "/settings", "/instructions"];
 const AUTH_ROUTES = ["/login", "/signup"];
 
 function routeMatch(pathname: string, route: string): boolean {
@@ -32,17 +32,19 @@ export async function updateSession(request: NextRequest) {
 
   const {
     data: { user },
+    error: userError,
   } = await supabase.auth.getUser();
 
   const pathname = request.nextUrl.pathname;
   const isProtected = PROTECTED_ROUTES.some((r) => routeMatch(pathname, r));
   const needsProfile = NEEDS_PROFILE_ROUTES.some((r) => routeMatch(pathname, r));
   const isAuthPath = AUTH_ROUTES.some((r) => routeMatch(pathname, r));
-  const hasProfile = user ? await fetchProfileIsComplete(supabase, user.id) : false;
+  const hasProfile = user && !userError ? await fetchProfileIsComplete(supabase, user.id) : false;
 
-  if (!user && isProtected) {
+  if ((!user || userError) && isProtected) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
+    url.searchParams.set("next", `${pathname}${request.nextUrl.search}`);
     return NextResponse.redirect(url);
   }
 
