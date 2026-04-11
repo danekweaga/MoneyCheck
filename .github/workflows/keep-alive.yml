@@ -1,9 +1,8 @@
-name: Keep Alive
+name: Keep App Alive
 
 on:
   schedule:
-    # Run once per week (Monday at 09:00 UTC)
-    - cron: "0 9 * * 1"
+    - cron: "0 12 * * 1"
   workflow_dispatch:
 
 jobs:
@@ -12,10 +11,4 @@ jobs:
     steps:
       - name: Ping health endpoint
         run: |
-          set -euo pipefail
-          URL="https://YOUR-VERCEL-DOMAIN/api/health"
-          echo "Pinging ${URL}"
-          curl --fail --show-error --silent --location \
-            --dump-header - \
-            --write-out "\nHTTP_STATUS:%{http_code}\n" \
-            "${URL}"
+          curl -i -f https://money-check-theta.vercel.app/api/health
