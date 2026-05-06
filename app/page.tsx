@@ -1,30 +1,9 @@
 import Link from "next/link";
 
 import { buttonVariants } from "@/components/ui/button";
-import { isProfileComplete, getProfileForUser } from "@/lib/data/profile";
-import { createClient } from "@/lib/supabase/server";
 import { cn } from "@/lib/utils";
 
-export default async function Home() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  let primaryHref = "/signup";
-  let primaryLabel = "Create your account";
-  let secondaryHref = "/login";
-  let secondaryLabel = "Sign in";
-
-  if (user) {
-    const profile = await getProfileForUser(user.id);
-    const complete = isProfileComplete(profile);
-    primaryHref = complete ? "/dashboard" : "/onboarding";
-    primaryLabel = complete ? "Go to dashboard" : "Complete onboarding";
-    secondaryHref = "/check/new";
-    secondaryLabel = "Start a money check";
-  }
-
+export default function Home() {
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-6xl flex-col justify-center gap-12 px-6 py-16">
       <section className="space-y-6">
@@ -39,14 +18,11 @@ export default async function Home() {
           personal money decisions.
         </p>
         <div className="flex flex-col gap-3 sm:flex-row">
-          <Link href={primaryHref} className={cn(buttonVariants({ size: "lg" }), "w-full sm:w-auto")}>
-            {primaryLabel}
+          <Link href="/signup" className={cn(buttonVariants({ size: "lg" }), "w-full sm:w-auto")}>
+            Create your account
           </Link>
-          <Link
-            href={secondaryHref}
-            className={cn(buttonVariants({ variant: "outline", size: "lg" }), "w-full sm:w-auto")}
-          >
-            {secondaryLabel}
+          <Link href="/login" className={cn(buttonVariants({ variant: "outline", size: "lg" }), "w-full sm:w-auto")}>
+            Sign in
           </Link>
         </div>
       </section>
