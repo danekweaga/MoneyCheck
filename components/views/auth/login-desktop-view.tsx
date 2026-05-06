@@ -14,7 +14,7 @@ export function LoginDesktopView() {
             <span className="text-secondary-fixed">Financial Future.</span>
           </h1>
           <p className="mt-6 max-w-md text-lg text-white/80">
-            Join a community of forward-thinking individuals who treat their wealth with precision.
+            Use your personal MoneyCheck workspace to think through spending decisions with precision.
           </p>
         </div>
         <p className="relative max-w-sm text-sm text-white/75">

@@ -13,7 +13,7 @@ export function LoginMobileView() {
             <span className="text-xl font-bold">MC</span>
           </div>
           <h1 className="text-4xl font-extrabold tracking-tight text-primary">MoneyCheck</h1>
-          <p className="mt-2 text-sm font-medium text-on-surface-variant">Smarter spending for students</p>
+          <p className="mt-2 text-sm font-medium text-on-surface-variant">Smarter personal spending decisions</p>
         </div>
         <LoginForm variant="mobile" />
       </div>

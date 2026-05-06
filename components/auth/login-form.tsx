@@ -56,7 +56,9 @@ export function LoginForm({ variant = "mobile" }: LoginFormProps) {
           Welcome back
         </CardTitle>
         <CardDescription className="text-on-surface-variant">
-          {variant === "desktop" ? "Sign in to your account." : "Sign in to continue your MoneyCheck plan."}
+          {variant === "desktop"
+            ? "Sign in to your personal account."
+            : "Sign in to continue your personal MoneyCheck checks."}
         </CardDescription>
       </CardHeader>
       <CardContent className={variant === "desktop" ? "px-8 pb-8" : "px-7 pb-7"}>
